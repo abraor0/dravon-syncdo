@@ -34,14 +34,16 @@ Accounts are created by an admin in the Supabase dashboard; public sign-up is di
 
 ## Setup
 
+Requires Node.js 20+ and Docker. Everything runs locally; no Supabase account is needed.
+
 1. `npm install`
-2. Create `.env.local`:
-   ```
-   VITE_SUPABASE_URL=...
-   VITE_SUPABASE_ANON_KEY=...
-   ```
-3. Apply the migrations in `supabase/migrations` (e.g. `supabase db push`).
-4. `npm run dev`
+2. `npx supabase start`: starts the local Supabase stack and applies `supabase/migrations` and `supabase/seed.sql`.
+3. `cp .env.example .env.local`
+
+   The values in `.env.example` are local test values only, not secrets. The key is the default publishable key built into the Supabase CLI: it is the same on every machine and only works against the local stack started by `npx supabase start`.
+4. `npm run dev` and sign in with `example1@example.com` / `password123` (or `example2@example.com`).
+
+To reset the database to the seed: `npx supabase db reset`. To stop: `npx supabase stop`.
 
 ## Scripts
 
