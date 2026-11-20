@@ -142,6 +142,7 @@ export const TaskCard = ({ task, currentUser, users, getDisplayName, onToggle, o
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setShowMenu(!showMenu)}
+                  title="More actions"
                   className="text-text-secondary hover:text-text-primary p-1 rounded hover:bg-bg-main transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer"
                 >
                   <MoreVertical size={16} />

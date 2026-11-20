@@ -1,0 +1,41 @@
+-- Shared by every *.test.sql file (included with \ir). Not a test file itself.
+--
+-- These helpers switch who the current transaction acts as, the same way PostgREST does for
+-- an API request: a database role plus the JWT claims that auth.uid(), auth.jwt() and
+-- auth.role() read. Everything is transaction-local, so each file's ROLLBACK undoes it.
+
+-- Act as a seeded member, looked up by email.
+create function pg_temp.act_as(member_email text) returns void
+language plpgsql as $$
+declare
+  member_id uuid;
+begin
+  perform set_config('role', 'none', true);
+  select id into member_id from auth.users where email = member_email;
+  if member_id is null then
+    raise exception 'no seeded member with email %', member_email;
+  end if;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', member_id, 'email', member_email, 'role', 'authenticated')::text, true);
+  perform set_config('role', 'authenticated', true);
+end;
+$$;
+
+-- Act as a visitor who is not signed in.
+create function pg_temp.act_as_visitor() returns void
+language plpgsql as $$
+begin
+  perform set_config('role', 'none', true);
+  perform set_config('request.jwt.claims', '{"role":"anon"}', true);
+  perform set_config('role', 'anon', true);
+end;
+$$;
+
+-- Back to the test runner's own role (direct database access, bypasses RLS).
+create function pg_temp.act_as_admin() returns void
+language plpgsql as $$
+begin
+  perform set_config('role', 'none', true);
+  perform set_config('request.jwt.claims', '', true);
+end;
+$$;

@@ -73,6 +73,7 @@ export const TaskList = ({
                   {userColumn !== currentUser && activeTab === 'company' && (
                     <button
                       onClick={() => removeViewedUser(userColumn)}
+                      title="Remove column"
                       className="text-text-secondary opacity-0 group-hover:opacity-100 hover:text-priority-high transition-opacity text-xs"
                     >
                       ✕
